@@ -7,9 +7,9 @@ const methods = {
       const [healthDetails] = await connection.query('SELECT * FROM health_data');
 
       if (healthDetails.length > 0) {
-        const { key, value } = healthDetails[0]; 
+        const { key, value } = healthDetails[0];
 
-        const postResponse = await fetch('http://localhost:3000/api/postdailydata', {
+        const postResponse = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN_URL}/api/postdailydata`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -15,7 +15,7 @@ const methods = {
         const token = generateToken();
         sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-        const passwordResetLink = `http://localhost:3000/updatePassword?token=${token}`;
+        const passwordResetLink = `${process.env.NEXT_PUBLIC_DOMAIN_URL}/updatePassword?token=${token}`;
         const msg = {
           to: email,
           from: process.env.EMAIL_FROM,
