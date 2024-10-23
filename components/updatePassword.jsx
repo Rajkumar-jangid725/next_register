@@ -1,21 +1,19 @@
 import { useState } from 'react';
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 export default function PasswordReset() {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const router = useRouter();
+    const [message, setMessage] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Check if the new password and confirm password match
         if (newPassword !== confirmPassword) {
             alert('Passwords do not match');
             return;
         }
 
-        // Update the password in the MongoDB database
         try {
             const response = await fetch('/api/updatePassword', {
                 method: 'POST',
@@ -26,8 +24,7 @@ export default function PasswordReset() {
             });
 
             if (response.ok) {
-                alert('Password updated successfully');
-                router.push('/passwordPage')
+                setMessage("Password Successfully updated!")
             } else {
                 alert('Failed to update password');
             }
@@ -42,6 +39,16 @@ export default function PasswordReset() {
                 <div className="row d-flex justify-content-center align-items-center h-100">
                     <div className="col-12 col-md-9 col-lg-7 col-xl-6">
                         <div className="card" style={{ borderRadius: "15px" }}>
+                            {message && (
+                                <div className='alert alert-success'>
+                                    <p className="text-center text-black-10 mt-5 mb-0">
+                                        Password Successfully updated.{"  "}
+                                        <Link href={"/login"} className="font-bold text-black">
+                                            login here
+                                        </Link>
+                                    </p>
+                                </div>
+                            )}
                             <div className="card-body p-5">
                                 <h2 className="text-uppercase text-center mb-4">Password Reset</h2>
                                 <form onSubmit={handleSubmit}>

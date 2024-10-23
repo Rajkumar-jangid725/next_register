@@ -1,9 +1,9 @@
-import Email from "../components/Email";
+import PasswordReset from "../components/updatePassword";
 
 export default function updatePassword() {
     return (
         <div>
-            <Email />
+            <PasswordReset />
         </div>
     );
 }

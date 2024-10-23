@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from "next/link";
+import { useRouter } from 'next/router';
 import "bootstrap/dist/css/bootstrap.css";
 
 function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState(null);
   const [message, setMessage] = useState('');
+  const router = useRouter();
 
   const login = async () => {
     setMessage('');
@@ -28,7 +29,7 @@ function LoginForm() {
         return;
       }
 
-      setUser(data);
+      router.push('/dashboard');
     } catch (error) {
       console.error('An error occurred during login:', error);
       setMessage('An unexpected error occurred. Please try again later.');
@@ -51,88 +52,63 @@ function LoginForm() {
 
   return (
     <>
-      {user ? (
-        <section className="vh-100 bg-image">
-          <div className="container h-100">
-            <div className="row d-flex justify-content-center align-items-center h-100">
-              <div className="col-12 col-md-9 col-lg-7 col-xl-6">
-                <div className="card" style={{ borderRadius: "15px" }}>
-                  {message && (
-                    <div className="alert alert-danger" role="alert">
-                      {message}
-                    </div>
-                  )}
-                  <div className="card-body p-5">
-                    <h2>Welcome, {user.data.firstName + ' ' + user.data.lastName}!</h2>
-                    <p>Thank you for logging in.</p>
+      <section className="vh-100 bg-image">
+        <div className="container h-100">
+          <div className="row d-flex justify-content-center align-items-center h-100">
+            <div className="col-12 col-md-9 col-lg-7 col-xl-6">
+              <div className="card" style={{ borderRadius: "15px" }}>
+                {message && (
+                  <div className="alert alert-danger" role="alert">
+                    {message}
                   </div>
-                </div>
-                <div className="d-flex justify-content-center">
-                  <a className="btn btn-primary m-2" href="http://localhost:3000">Sign Out</a>
+                )}
+                <div className="card-body p-5">
+                  <h2 className="text-uppercase text-center mb-4">Login</h2>
+                  <form onSubmit={handleSubmit}>
+                    <div className="form-outline mb-2">
+                      <label className="form-label">Your Email</label>
+                      <input
+                        type="text"
+                        value={email}
+                        className="form-control"
+                        placeholder="Enter email"
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </div>
+                    <div className="form-outline mb-2">
+                      <label className="form-label">Password</label>
+                      <input
+                        type="password"
+                        value={password}
+                        className="form-control"
+                        placeholder="Enter password"
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </div>
+                    <div className="d-flex justify-content-center">
+                      <button type="submit">Login</button>
+                      <span style={{ paddingLeft: "40%" }}>
+                        <Link href="/reset" className="fw-bold text-body"><u>Reset Password</u></Link>
+                      </span>
+                    </div>
+                    <div className='mx-auto my-4 flex text-center fw-bold'>
+                      or
+                    </div>
+                    <div>
+                      <p className='text-center text-sm text-gray-600 mt-2'>
+                        If you don&apos;t have an account, please&nbsp;
+                        <Link className='text-blue-500 hover:underline' href='/signup'>
+                          Sign Up
+                        </Link>
+                      </p>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
           </div>
-        </section>
-      ) : (
-        <section className="vh-100 bg-image">
-          <div className="container h-100">
-            <div className="row d-flex justify-content-center align-items-center h-100">
-              <div className="col-12 col-md-9 col-lg-7 col-xl-6">
-                <div className="card" style={{ borderRadius: "15px" }}>
-                  {message && (
-                    <div className="alert alert-danger" role="alert">
-                      {message}
-                    </div>
-                  )}
-                  <div className="card-body p-5">
-                    <h2 className="text-uppercase text-center mb-4">Login</h2>
-                    <form onSubmit={handleSubmit}>
-                      <div className="form-outline mb-2">
-                        <label className="form-label">Your Email</label>
-                        <input
-                          type="text"
-                          value={email}
-                          className="form-control"
-                          placeholder="Enter email"
-                          onChange={(e) => setEmail(e.target.value)}
-                        />
-                      </div>
-                      <div className="form-outline mb-2">
-                        <label className="form-label">Password</label>
-                        <input
-                          type="password"
-                          value={password}
-                          className="form-control"
-                          placeholder="Enter password"
-                          onChange={(e) => setPassword(e.target.value)}
-                        />
-                      </div>
-                      <div className="d-flex justify-content-center">
-                        <button type="submit">Login</button>
-                        <span style={{ paddingLeft: "40%" }}>
-                          <Link href="/reset" className="fw-bold text-body"><u>Reset Password</u></Link>
-                        </span>
-                      </div>
-                      <div className='mx-auto my-4 flex text-center fw-bold'>
-                        or
-                      </div>
-                      <div>
-                        <p className='text-center text-sm text-gray-600 mt-2'>
-                          If you don&apos;t have an account, please&nbsp;
-                          <Link className='text-blue-500 hover:underline' href='http://localhost:3000'>
-                            Sign Up
-                          </Link>
-                        </p>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+        </div>
+      </section>
     </>
   );
 }
