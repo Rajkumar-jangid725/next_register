@@ -4,15 +4,14 @@ import React, { useState, useEffect } from 'react';
 import Link from "next/link";
 import "bootstrap/dist/css/bootstrap.css";
 
-
 function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  const [alert, setAlert] = useState('');
-  const [error, setError] = useState('')
+  const [message, setMessage] = useState('');
 
   const login = async () => {
+    setMessage('');
     try {
       const response = await fetch('/api/login', {
         method: 'POST',
@@ -22,19 +21,17 @@ function LoginForm() {
         body: JSON.stringify({ email, password }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.error) {
-          setAlert("Email or password incorrect");
-          return;
-        }
-        setUser(data);
+      const data = await response.json();
+
+      if (!response.ok || data.error) {
+        setMessage("Email or password incorrect");
         return;
       }
-      const errorData = await response.json();
-      setError(errorData.message);
+
+      setUser(data);
     } catch (error) {
       console.error('An error occurred during login:', error);
+      setMessage('An unexpected error occurred. Please try again later.');
     }
   };
 
@@ -44,54 +41,50 @@ function LoginForm() {
   };
 
   useEffect(() => {
-    if (alert) {
+    if (message) {
       const timer = setTimeout(() => {
-        setAlert('');
+        setMessage('');
       }, 2000);
-
       return () => clearTimeout(timer);
     }
-  }, [alert]);
+  }, [message]);
 
   return (
     <>
-      {alert && (
-        <div className="alert alert-danger my=10" role="alert">
-          {alert}
-        </div>
-      )}
-
       {user ? (
-        <>
-          <section className="vh-100 bg-image">
-            <div className="container h-100">
-              <div className="row d-flex justify-content-center align-items-center h-100">
-                <div className="col-12 col-md-9 col-lg-7 col-xl-6">
-                  <div className="card" style={{ borderRadius: "15px" }}>
-                    <div className="card-body p-5">
-                      <div>
-                        <h2>Welcome, {user.data.firstName + ' ' + user.data.lastName}!</h2>
-                        <p>Thank you for logging in.</p>
-                      </div>
-
+        <section className="vh-100 bg-image">
+          <div className="container h-100">
+            <div className="row d-flex justify-content-center align-items-center h-100">
+              <div className="col-12 col-md-9 col-lg-7 col-xl-6">
+                <div className="card" style={{ borderRadius: "15px" }}>
+                  {message && (
+                    <div className="alert alert-danger" role="alert">
+                      {message}
                     </div>
-
-                  </div>
-                  <div class="d-flex justify-content-center">
-                    <a class="btn btn-primary m-2" href="http://localhost:3000">Sign Out</a>
+                  )}
+                  <div className="card-body p-5">
+                    <h2>Welcome, {user.data.firstName + ' ' + user.data.lastName}!</h2>
+                    <p>Thank you for logging in.</p>
                   </div>
                 </div>
-
+                <div className="d-flex justify-content-center">
+                  <a className="btn btn-primary m-2" href="http://localhost:3000">Sign Out</a>
+                </div>
               </div>
             </div>
-          </section>
-        </>
+          </div>
+        </section>
       ) : (
         <section className="vh-100 bg-image">
           <div className="container h-100">
             <div className="row d-flex justify-content-center align-items-center h-100">
               <div className="col-12 col-md-9 col-lg-7 col-xl-6">
                 <div className="card" style={{ borderRadius: "15px" }}>
+                  {message && (
+                    <div className="alert alert-danger" role="alert">
+                      {message}
+                    </div>
+                  )}
                   <div className="card-body p-5">
                     <h2 className="text-uppercase text-center mb-4">Login</h2>
                     <form onSubmit={handleSubmit}>
@@ -117,7 +110,20 @@ function LoginForm() {
                       </div>
                       <div className="d-flex justify-content-center">
                         <button type="submit">Login</button>
-                        <span style={{ "paddingLeft": "40%" }}><Link href="/reset" className="fw-bold text-body"><u>Reset Password</u></Link></span>
+                        <span style={{ paddingLeft: "40%" }}>
+                          <Link href="/reset" className="fw-bold text-body"><u>Reset Password</u></Link>
+                        </span>
+                      </div>
+                      <div className='mx-auto my-4 flex text-center fw-bold'>
+                        or
+                      </div>
+                      <div>
+                        <p className='text-center text-sm text-gray-600 mt-2'>
+                          If you don&apos;t have an account, please&nbsp;
+                          <Link className='text-blue-500 hover:underline' href='http://localhost:3000'>
+                            Sign Up
+                          </Link>
+                        </p>
                       </div>
                     </form>
                   </div>

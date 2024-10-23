@@ -10,10 +10,31 @@ export default function Home() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [isRegistered, setIsRegistered] = useState(false);
+
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateEmail(email)) {
+      setErrorMessage("Invalid email format.");
+      setTimeout(() => setErrorMessage(""), 3000);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setErrorMessage("Passwords do not match.");
+      setTimeout(() => setErrorMessage(""), 3000);
+      return;
+    }
+
+    setErrorMessage("");
 
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -36,6 +57,10 @@ export default function Home() {
         setLastName("");
         setEmail("");
         setPassword("");
+        setConfirmPassword("");
+        setTimeout(() => {
+          setIsRegistered(false);
+        }, 3000);
       } else {
         alert("An error occurred");
       }
@@ -51,18 +76,21 @@ export default function Home() {
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col-12 col-md-9 col-lg-7 col-xl-6">
             <div className="card" style={{ borderRadius: "15px" }}>
+              {isRegistered && (
+                <div className="alert alert-success" role="alert">
+                  Welcome! You have successfully registered.
+                  <Link href="/login" className="fw-bold text-body">
+                    Login here
+                  </Link>
+                </div>
+              )}
+              {errorMessage && (
+                <div className="alert alert-danger" role="alert">
+                  {errorMessage}
+                </div>
+              )}
               <div className="card-body p-5">
-                <h2 className="text-uppercase text-center mb-4">
-                  Registration
-                </h2>
-                {isRegistered ? (
-                  <div className="alert alert-success" role="alert">
-                    Welcome! You have successfully registered.
-                    <Link href="/login" className="fw-bold text-body">
-                      Login here
-                    </Link>
-                  </div>
-                ) : null}
+                <h2 className="text-uppercase text-center mb-4">Registration</h2>
                 <form onSubmit={handleSubmit}>
                   <div className="form-row mb-2">
                     <div className="col">
@@ -104,6 +132,16 @@ export default function Home() {
                       className="form-control"
                       placeholder="Enter password"
                       onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </div>
+                  <div className="form-outline mb-2">
+                    <label className="form-label">Confirm Password</label>
+                    <input
+                      type="password"
+                      value={confirmPassword}
+                      className="form-control"
+                      placeholder="Confirm password"
+                      onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                   </div>
                   <div className="d-flex justify-content-center">

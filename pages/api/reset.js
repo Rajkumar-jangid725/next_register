@@ -17,19 +17,19 @@ const methods = {
 
         const passwordResetLink = `http://localhost:3000/updatePassword?token=${token}`;
         console.log(`password link: ${passwordResetLink}`)
-        const msg = {
-          to: email,
-          from: process.env.EMAIL_FROM,
-          templateId: process.env.TEMPLATE_ID,
-          dynamicTemplateData: {
-            passwordResetLink: passwordResetLink,
-          },
-        };
+        // const msg = {
+        //   to: email,
+        //   from: process.env.EMAIL_FROM,
+        //   templateId: process.env.TEMPLATE_ID,
+        //   dynamicTemplateData: {
+        //     passwordResetLink: passwordResetLink,
+        //   },
+        // };
 
-        await sgMail.send(msg);
+        // await sgMail.send(msg);
 
-        // Save the token in MySQL
-        await saveTokenInMySQL(connection, email, token);
+        // // Save the token in MySQL
+        // await saveTokenInMySQL(connection, email, token);
 
         return res.status(200).json({ data: { firstName, lastName } });
       } else {
