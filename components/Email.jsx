@@ -9,13 +9,11 @@ export default function PasswordReset() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Check if the new password and confirm password match
         if (newPassword !== confirmPassword) {
             alert('Passwords do not match');
             return;
         }
 
-        // Update the password in the MongoDB database
         try {
             const response = await fetch('/api/updatePassword', {
                 method: 'POST',
